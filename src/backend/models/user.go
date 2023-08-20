@@ -1,9 +1,12 @@
 package models
 
 import (
+	"errors"
+	"fmt"
 	"html"
 	"strings"
 	"time"
+
 	"github.com/CyberTea0X/delta_art/src/backend/utils/token"
 	"github.com/jinzhu/gorm"
 	"golang.org/x/crypto/bcrypt"
@@ -41,7 +44,27 @@ func VerifyPassword(password,hashedPassword string) error {
 	return bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
 }
 
-func LoginCheck(username string, password string) (string,error) {
+
+func GetUserByID(uid uint) (User,error) {
+
+	var u User
+
+	if err := DB.First(&u,uid).Error; err != nil {
+        return u, errors.New(fmt.Sprintf("User with id=%d not found", uid))
+	}
+
+	u.PrepareGive()
+	
+	return u,nil
+
+}
+
+func (u *User) PrepareGive(){
+	u.Password = ""
+}
+
+
+func Login(username string, password string) (string,error) {
 	
 	var err error
 

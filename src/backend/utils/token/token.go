@@ -11,6 +11,10 @@ import (
 	jwt "github.com/dgrijalva/jwt-go"
 )
 
+// Function that generates a JWT token that contains data:
+// That the user is authorized;
+// Authorized user ID;
+// JWT token expiration date;
 func GenerateToken(user_id uint) (string, error) {
 
 	token_lifespan,err := strconv.Atoi(os.Getenv("TOKEN_HOUR_LIFESPAN"))

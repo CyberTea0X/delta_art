@@ -3,8 +3,9 @@ package main
 import (
     "fmt"
     "github.com/gin-gonic/gin"
-    "github.com/CyberTea0X/delta_art/src/backend/auth"
+    "github.com/CyberTea0X/delta_art/src/backend/controllers"
     "github.com/CyberTea0X/delta_art/src/backend/models"
+    "github.com/CyberTea0X/delta_art/src/backend/middlewares"
 )
 
 func main() {
@@ -15,8 +16,12 @@ func main() {
 
     public := router.Group("api")
     public.GET("health_check", HealthCheck)
-    public.POST("register", auth.Register)
-    public.POST("login", auth.Login)
+    public.POST("register", controllers.Register)
+    public.POST("login", controllers.Login)
+
+    protected := router.Group("api")
+    protected.Use(middlewares.JwtAuthMiddleware())
+    protected.GET("/user", controllers.CurrentUser)
     fmt.Println("delta_art api server starting on port ", port)
 
     router.Run(":" + port)
