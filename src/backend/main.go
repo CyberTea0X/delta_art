@@ -16,6 +16,7 @@ func main() {
     public := router.Group("api")
     public.GET("health_check", HealthCheck)
     public.POST("register", auth.Register)
+    public.POST("login", auth.Login)
     fmt.Println("delta_art api server starting on port ", port)
 
     router.Run(":" + port)
