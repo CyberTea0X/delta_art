@@ -12,38 +12,72 @@ import (
 )
 
 // Function that generates a JWT token that contains data:
-// That the user is authorized;
 // Authorized user ID;
 // JWT token expiration date;
-func GenerateToken(user_id uint) (string, error) {
+func GenerateAccessToken(user_id uint) (string, int64, error) {
 
-	token_lifespan,err := strconv.Atoi(os.Getenv("TOKEN_HOUR_LIFESPAN"))
+	token_lifespan,err := strconv.Atoi(os.Getenv("ACCESS_TOKEN_HOUR_LIFESPAN"))
+	if err != nil {
+		return "", 0, err
+	}
+    expires := time.Now().Add(time.Hour * time.Duration(token_lifespan)).Unix()
+
+
+	claims := jwt.MapClaims{}
+	claims["user_id"] = user_id
+	claims["exp"] = expires
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+    token_string, err := token.SignedString([]byte(os.Getenv("ACCESS_TOKEN_SECRET")))
+
+	return token_string, expires, err
+
+}
+
+// Function that generates a Refresh JWT token that contains data:
+// User ID;
+// Refresh JWT token expiration date;
+func GenerateRefreshToken(user_id uint) (string, error) {
+
+	token_lifespan,err := strconv.Atoi(os.Getenv("REFRESH_TOKEN_HOUR_LIFESPAN"))
 	if err != nil {
 		return "", err
 	}
 
 	claims := jwt.MapClaims{}
-	claims["authorized"] = true
 	claims["user_id"] = user_id
 	claims["exp"] = time.Now().Add(time.Hour * time.Duration(token_lifespan)).Unix()
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+    token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+    token_string, err := token.SignedString([]byte(os.Getenv("REFRESH_TOKEN_SECRET")))
 
-	return token.SignedString([]byte(os.Getenv("API_SECRET")))
+	return token_string, err
 
 }
 
-// Checks that token is valid by checking its sign method
-func TokenValid(c *gin.Context) error {
-	tokenString := ExtractToken(c)
-	_, result := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+// Parses token from token string
+// While parsing checks if token is valid by checking its sign and signature
+func TokenParse(token string, signature string) (*jwt.Token, error) {
+	jwt, result := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
 		}
-		return []byte(os.Getenv("API_SECRET")), nil
+		return []byte(signature), nil
 	})
-	return result
+	return jwt, result
 }
 
+// Parses refresh token from token string
+// While parsing checks if token is valid by checking its sign and signature
+func RefreshTokenParse(token string) (*jwt.Token, error) {
+    return TokenParse(token, os.Getenv("REFRESH_TOKEN_SECRET"))
+}
+
+// Parses access token from token string
+// While parsing checks if token is valid by checking its sign and signature
+func AccessTokenParse(token string) (*jwt.Token, error) {
+    return TokenParse(token, os.Getenv("ACCESS_TOKEN_SECRET"))
+}
+
+// Extracts Token from query
 func ExtractToken(c *gin.Context) string {
 	token := c.Query("token")
 	if token != "" {
@@ -56,20 +90,11 @@ func ExtractToken(c *gin.Context) string {
 	return ""
 }
 
-func ExtractTokenID(c *gin.Context) (uint, error) {
-
-	tokenString := ExtractToken(c)
-	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
-		}
-		return []byte(os.Getenv("API_SECRET")), nil
-	})
-	if err != nil {
-		return 0, err
-	}
-	claims, ok := token.Claims.(jwt.MapClaims)
-	if ok && token.Valid {
+// Extracts user_id from token
+// Error if token is invalid or parsing is failed
+func ExtractTokenID(jwt_token *jwt.Token) (uint, error) {
+	claims, ok := jwt_token.Claims.(jwt.MapClaims)
+	if ok && jwt_token.Valid {
 		uid, err := strconv.ParseUint(fmt.Sprintf("%.0f", claims["user_id"]), 10, 32)
 		if err != nil {
 			return 0, err

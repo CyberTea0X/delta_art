@@ -9,8 +9,13 @@ import (
 
 
 func CurrentUser(c *gin.Context){
+    jwt_token, err := token.AccessTokenParse(token.ExtractToken(c))
+    if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+    }
 
-	user_id, err := token.ExtractTokenID(c)
+	user_id, err := token.ExtractTokenID(jwt_token)
 	
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})

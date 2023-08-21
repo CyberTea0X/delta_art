@@ -12,8 +12,9 @@ type LoginInput struct {
 	Password string `json:"password" binding:"required"`
 }
 
-// Функция, которая отвечает за авторизацию пользователя.
-// В ответ на успешный запрос на авторизацию возвращает JWT токен
+// Function that is responsible for user authorization.
+// In response to a successful authorization request, returns 
+// Access Token and Refresh Token, as well as the time of death of the Access Token
 func Login(c *gin.Context) {
 
 	var input LoginInput
@@ -28,13 +29,17 @@ func Login(c *gin.Context) {
 	u.Username = input.Username
 	u.Password = input.Password
 
-	token, err := models.Login(u.Username, u.Password)
+	tokens, err := models.Login(u.Username, u.Password)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "username or password is incorrect."})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"token": token})
+    c.JSON(http.StatusOK, gin.H{
+        "accessToken": tokens.AccessToken,
+        "refreshToken": tokens.RefreshToken,
+        "expires_at": tokens.AccessTokenExpires,
+    })
 
 }

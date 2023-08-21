@@ -63,8 +63,14 @@ func (u *User) PrepareGive(){
 	u.Password = ""
 }
 
+type TokensData struct {
+    AccessToken string
+    RefreshToken string
+    AccessTokenExpires int64
+}
 
-func Login(username string, password string) (string,error) {
+
+func Login(username string, password string) (TokensData, error) {
 	
 	var err error
 
@@ -73,21 +79,27 @@ func Login(username string, password string) (string,error) {
 	err = DB.Model(User{}).Where("username = ?", username).Take(&u).Error
 
 	if err != nil {
-		return "", err
+		return TokensData{}, err
 	}
 
 	err = VerifyPassword(password, u.Password)
 
 	if err != nil && err == bcrypt.ErrMismatchedHashAndPassword {
-		return "", err
+		return TokensData{}, err
 	}
 
-	token,err := token.GenerateToken(u.ID)
+	access_token, expires, err := token.GenerateAccessToken(u.ID)
 
 	if err != nil {
-		return "",err
+		return TokensData{}, err
 	}
 
-	return token,nil
+    refresh_token, err := token.GenerateRefreshToken(u.ID)
+
+    if err != nil {
+		return TokensData{}, err
+	}
+
+	return TokensData{access_token, refresh_token, expires}, err
 	
 }
