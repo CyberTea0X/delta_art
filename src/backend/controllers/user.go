@@ -2,19 +2,20 @@ package controllers
 
 import (
 	"net/http"
+
+	"github.com/CyberTea0X/delta_art/src/backend/models"
+	"github.com/CyberTea0X/delta_art/src/backend/utils/token"
+	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
-    "github.com/CyberTea0X/delta_art/src/backend/models"
-    "github.com/CyberTea0X/delta_art/src/backend/utils/token"
 )
 
 
-func CurrentUser(c *gin.Context){
-    jwt_token, err := token.AccessTokenParse(token.ExtractToken(c))
-    if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-    }
+func (p *PublicController) CurrentUser(c *gin.Context){
+    maybe_token, _ := c.Get("access_token")
 
+    jwt_token := maybe_token.(*jwt.Token)
+    
+    
 	user_id, err := token.ExtractTokenID(jwt_token)
 	
 	if err != nil {
@@ -22,7 +23,7 @@ func CurrentUser(c *gin.Context){
 		return
 	}
 	
-	u,err := models.GetUserByID(user_id)
+	u,err := models.GetUserByID(p.DB, user_id)
 	
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})

@@ -1,8 +1,8 @@
 package models
 
 import (
+	"errors"
 	"fmt"
-	"log"
 	"os"
 
 	"github.com/jinzhu/gorm"
@@ -10,15 +10,14 @@ import (
 	"github.com/joho/godotenv"
 )
 
-var DB *gorm.DB
-
-func ConnectDataBase(){
+func ConnectDataBase() (*gorm.DB, error) {
 
 	err := godotenv.Load(".env")
 
 	if err != nil {
-	  log.Fatalf("Error loading .env file")
+        return &gorm.DB{}, errors.New("error opening .env file: " + err.Error())
 	}	
+
 	Dbdriver := os.Getenv("DB_DRIVER")
 	DbHost := os.Getenv("DB_HOST")
 	DbUser := os.Getenv("DB_USER")
@@ -28,15 +27,13 @@ func ConnectDataBase(){
 
 	DBURL := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local", DbUser, DbPassword, DbHost, DbPort, DbName)
 	
-	DB, err = gorm.Open(Dbdriver, DBURL)
+    DB, err := gorm.Open(Dbdriver, DBURL)
 
 	if err != nil {
-		fmt.Println("Cannot connect to database ", Dbdriver)
-		log.Fatal("connection error:", err)
-	} else {
-		fmt.Println("We are connected to the ", Dbdriver, "database")
-	}
+        return &gorm.DB{}, err
+	} 
 
 	DB.AutoMigrate(&User{})
-		
+    DB.AutoMigrate(&RefreshToken{})
+    return DB, err
 }

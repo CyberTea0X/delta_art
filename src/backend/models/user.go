@@ -16,12 +16,13 @@ type User struct {
 	gorm.Model
 	Username string `gorm:"size:255;not null;" json:"username"`
 	Password string `gorm:"size:255;not null;" json:"password"`
+    RefreshTokens []RefreshToken `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 }
 
-func (u *User) SaveUser() (*User, error) {
+func (u *User) SaveUser(db *gorm.DB) (*User, error) {
     u.CreatedAt = time.Now()
     u.UpdatedAt = time.Now()
-	return u, DB.Create(&u).Error
+	return u, db.Create(&u).Error
 }
 
 func (u *User) BeforeSave() error {
@@ -45,11 +46,11 @@ func VerifyPassword(password,hashedPassword string) error {
 }
 
 
-func GetUserByID(uid uint) (User,error) {
+func GetUserByID(db *gorm.DB, uid uint) (User,error) {
 
 	var u User
 
-	if err := DB.First(&u,uid).Error; err != nil {
+	if err := db.First(&u,uid).Error; err != nil {
         return u, errors.New(fmt.Sprintf("User with id=%d not found", uid))
 	}
 
@@ -70,13 +71,13 @@ type TokensData struct {
 }
 
 
-func Login(username string, password string) (TokensData, error) {
+func Login(db *gorm.DB, username string, password string) (TokensData, error) {
 	
 	var err error
 
 	u := User{}
 
-	err = DB.Model(User{}).Where("username = ?", username).Take(&u).Error
+	err = db.Model(User{}).Where("username = ?", username).Take(&u).Error
 
 	if err != nil {
 		return TokensData{}, err
@@ -99,6 +100,16 @@ func Login(username string, password string) (TokensData, error) {
     if err != nil {
 		return TokensData{}, err
 	}
+
+    refresh_model := RefreshToken{}
+    refresh_model.Token = refresh_token
+    refresh_model.UserID = u.ID
+
+    if _, err := refresh_model.SaveToken(db); err != nil {
+        return TokensData{}, err
+    }
+
+
 
 	return TokensData{access_token, refresh_token, expires}, err
 	

@@ -3,6 +3,7 @@ package controllers
 import (
 	"net/http"
 	"github.com/CyberTea0X/delta_art/src/backend/utils/token"
+	"github.com/CyberTea0X/delta_art/src/backend/models"
 	"github.com/gin-gonic/gin"
 )
 
@@ -11,7 +12,7 @@ type RefreshInput struct {
     RefreshToken string `json:"token" binding:"required"`
 }
 
-func Refresh(c *gin.Context) {
+func (p *PublicController) Refresh(c *gin.Context) {
 
 	var input RefreshInput
 
@@ -29,7 +30,7 @@ func Refresh(c *gin.Context) {
     user_id, err := token.ExtractTokenID(old_token)
 
     if err != nil {
-		c.JSON(http.StatusBadRequest, err)
+        c.JSON(http.StatusBadRequest, err)
         return 
     }
 
@@ -41,6 +42,16 @@ func Refresh(c *gin.Context) {
     }
 
     access_token, expires_at, err := token.GenerateAccessToken(user_id)
+
+    refresh_model := models.RefreshToken{}
+    refresh_model.Token = refresh_token
+    refresh_model.UserID = user_id
+
+    if _, err := refresh_model.SaveToken(p.DB); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+    }
+
+    models.DeleteRefreshToken(p.DB, input.RefreshToken)
 
     if err != nil {
 		c.JSON(http.StatusBadRequest, err)

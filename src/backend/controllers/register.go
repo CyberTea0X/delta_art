@@ -11,7 +11,7 @@ type RegisterInput struct {
 	Password string `json:"password" binding:"required"`
 }
 
-func Register(c *gin.Context) {
+func (p *PublicController) Register(c *gin.Context) {
 
     var input RegisterInput
 
@@ -25,7 +25,7 @@ func Register(c *gin.Context) {
 	user.Username = input.Username
 	user.Password = input.Password
 
-    if _, err := user.SaveUser(); err != nil {
+    if _, err := user.SaveUser(p.DB); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
     }
 

@@ -15,7 +15,7 @@ type LoginInput struct {
 // Function that is responsible for user authorization.
 // In response to a successful authorization request, returns 
 // Access Token and Refresh Token, as well as the time of death of the Access Token
-func Login(c *gin.Context) {
+func (p *PublicController) Login(c *gin.Context) {
 
 	var input LoginInput
 
@@ -29,7 +29,7 @@ func Login(c *gin.Context) {
 	u.Username = input.Username
 	u.Password = input.Password
 
-	tokens, err := models.Login(u.Username, u.Password)
+	tokens, err := models.Login(p.DB, u.Username, u.Password)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "username or password is incorrect."})
