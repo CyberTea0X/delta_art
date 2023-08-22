@@ -71,7 +71,7 @@ type TokensData struct {
 }
 
 
-func Login(db *gorm.DB, username string, password string) (TokensData, error) {
+func Login(db *gorm.DB, username string, password string, device_id uint) (TokensData, error) {
 	
 	var err error
 
@@ -89,13 +89,15 @@ func Login(db *gorm.DB, username string, password string) (TokensData, error) {
 		return TokensData{}, err
 	}
 
+    DeleteOldTokens(db, u.ID, device_id)
+
 	access_token, expires, err := token.GenerateAccessToken(u.ID)
 
 	if err != nil {
 		return TokensData{}, err
 	}
 
-    refresh_token, err := token.GenerateRefreshToken(u.ID)
+    refresh_token, err := token.GenerateRefresh(u.ID, device_id)
 
     if err != nil {
 		return TokensData{}, err
@@ -104,6 +106,7 @@ func Login(db *gorm.DB, username string, password string) (TokensData, error) {
     refresh_model := RefreshToken{}
     refresh_model.Token = refresh_token
     refresh_model.UserID = u.ID
+    refresh_model.DeviceID = device_id
 
     if _, err := refresh_model.SaveToken(db); err != nil {
         return TokensData{}, err

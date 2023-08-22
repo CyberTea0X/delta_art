@@ -10,6 +10,7 @@ import (
 type LoginInput struct {
 	Username string `json:"username" binding:"required"`
 	Password string `json:"password" binding:"required"`
+	DeviceId uint `json:"device_id" binding:"required"`
 }
 
 // Function that is responsible for user authorization.
@@ -29,7 +30,7 @@ func (p *PublicController) Login(c *gin.Context) {
 	u.Username = input.Username
 	u.Password = input.Password
 
-	tokens, err := models.Login(p.DB, u.Username, u.Password)
+	tokens, err := models.Login(p.DB, u.Username, u.Password, input.DeviceId)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "username or password is incorrect."})

@@ -8,7 +8,7 @@ import (
 
 func JwtAuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		token, err := token.AccessTokenParse(token.ExtractToken(c))
+		token, err := token.AccessParse(token.ExtractToken(c))
 		if err != nil {
 			c.String(http.StatusUnauthorized, "Unauthorized")
 			c.Abort()

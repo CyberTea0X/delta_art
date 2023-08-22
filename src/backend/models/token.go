@@ -1,8 +1,6 @@
 package models
 
 import (
-	"errors"
-	"fmt"
 	"time"
 
 	"github.com/jinzhu/gorm"
@@ -10,6 +8,7 @@ import (
 
 type RefreshToken struct {
 	gorm.Model
+    DeviceID uint `gorm:"not null;" json:"device_id"`
 	Token string `gorm:"size:255;not null;" json:"token"`
     UserID uint
 }
@@ -20,13 +19,13 @@ func (t *RefreshToken) SaveToken(db *gorm.DB) (*RefreshToken, error) {
 	return t, db.Create(&t).Error
 }
 
-func DeleteRefreshToken(db *gorm.DB, token string) error {
-
+func DeleteOldTokens(db *gorm.DB, user_id uint, device_id uint) {
 	var t RefreshToken
+    db.Where("user_id = ? AND device_id = ?", user_id, device_id).Unscoped().Delete(&t)
+}
 
-    if err := db.Where("token = ?", token).Unscoped().Delete(&t).Error; err != nil {
-        return errors.New(fmt.Sprintf("token %s not found in DB", token))
-	}
-
-    return nil
+func RefreshTokenExists(db *gorm.DB, user_id uint, device_id uint) bool {
+	var t RefreshToken
+    db.Where("user_id = ? AND device_id = ?", user_id, device_id).First(&t)
+    return db.Error == nil
 }

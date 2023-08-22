@@ -1,22 +1,23 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/CyberTea0X/delta_art/src/backend/models"
 	"github.com/CyberTea0X/delta_art/src/backend/utils/token"
-	"github.com/dgrijalva/jwt-go"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/gin-gonic/gin"
 )
 
 
 func (p *PublicController) CurrentUser(c *gin.Context){
-    maybe_token, _ := c.Get("access_token")
+    fmt.Println(c.Request.RequestURI)
+    jwt_token := c.MustGet("access_token").(*jwt.Token)
 
-    jwt_token := maybe_token.(*jwt.Token)
     
     
-	user_id, err := token.ExtractTokenID(jwt_token)
+	user_id, err := token.ExtractUint(jwt_token, "user_id")
 	
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
