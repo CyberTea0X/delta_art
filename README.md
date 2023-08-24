@@ -1,5 +1,11 @@
 # delta_art
-Just rewrite of my course work in Go, mainly, the backend part.
+Complete rewrite of my course work all by myself using Go for backend (gorm, gin, jwt) and Typescript(sweltejs)
+
+## Main objectives:
+ - JWT with refresh and access tokens for safety
+ - Websockets for chat
+ - Cloud or some database as images storage
+ - Try ORM
 
 ## Backend .env template
 
