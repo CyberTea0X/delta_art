@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"html"
+	"net/mail"
 	"strings"
 	"time"
 
@@ -16,6 +17,7 @@ type User struct {
 	gorm.Model
 	Username string `gorm:"size:255;not null;" json:"username"`
 	Password string `gorm:"size:255;not null;" json:"password"`
+    Email string `gorm:"size:255;not null;unique;" json:"email"`
     RefreshTokens []RefreshToken `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 }
 
@@ -41,8 +43,16 @@ func (u *User) BeforeSave() error {
 
 }
 
-func VerifyPassword(password,hashedPassword string) error {
+func VerifyPassword(password string, hashedPassword string) error {
 	return bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
+}
+
+func IsValidEmail(email string) bool {
+    _, err := mail.ParseAddress(email)
+    if err == nil {
+        return true
+    }
+    return false
 }
 
 
@@ -62,6 +72,7 @@ func GetUserByID(db *gorm.DB, uid uint) (User,error) {
 
 func (u *User) PrepareGive(){
 	u.Password = ""
+    u.Email = ""
 }
 
 type TokensData struct {
@@ -71,19 +82,23 @@ type TokensData struct {
 }
 
 
-func Login(db *gorm.DB, username string, password string, device_id uint) (TokensData, error) {
+func Login(db *gorm.DB, u User, device_id uint) (TokensData, error) {
 	
 	var err error
 
-	u := User{}
+    var userdb User
 
-	err = db.Model(User{}).Where("username = ?", username).Take(&u).Error
+    if u.Username != "" {
+	    err = db.Model(User{}).Where("username = ?", u.Username).Take(&userdb).Error
+    } else {
+        err = db.Model(User{}).Where("email = ?", u.Email).Take(&userdb).Error
+    }
 
 	if err != nil {
 		return TokensData{}, err
 	}
 
-	err = VerifyPassword(password, u.Password)
+    err = VerifyPassword(u.Password, userdb.Password)
 
 	if err != nil && err == bcrypt.ErrMismatchedHashAndPassword {
 		return TokensData{}, err

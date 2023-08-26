@@ -8,8 +8,9 @@ import (
 
 // Structure describing the json fields that should be in the login request
 type LoginInput struct {
-	Username string `json:"username" binding:"required"`
+	Username string `json:"username"`
 	Password string `json:"password" binding:"required"`
+	Email string `json:"email"`
 	DeviceId uint `json:"device_id" binding:"required"`
 }
 
@@ -29,8 +30,9 @@ func (p *PublicController) Login(c *gin.Context) {
 
 	u.Username = input.Username
 	u.Password = input.Password
+    u.Email = input.Email
 
-	tokens, err := models.Login(p.DB, u.Username, u.Password, input.DeviceId)
+	tokens, err := models.Login(p.DB, u, input.DeviceId)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "username or password is incorrect."})
