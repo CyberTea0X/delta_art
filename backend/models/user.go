@@ -86,33 +86,33 @@ func Login(db *gorm.DB, u User, device_id uint) (TokensData, error) {
 	
 	var err error
 
-    var userdb User
+    var udb User
 
     if u.Username != "" {
-	    err = db.Model(User{}).Where("username = ?", u.Username).Take(&userdb).Error
+	    err = db.Model(User{}).Where("username = ?", u.Username).Take(&udb).Error
     } else {
-        err = db.Model(User{}).Where("email = ?", u.Email).Take(&userdb).Error
+        err = db.Model(User{}).Where("email = ?", u.Email).Take(&udb).Error
     }
 
 	if err != nil {
 		return TokensData{}, err
 	}
 
-    err = VerifyPassword(u.Password, userdb.Password)
+    err = VerifyPassword(u.Password, udb.Password)
 
 	if err != nil && err == bcrypt.ErrMismatchedHashAndPassword {
 		return TokensData{}, err
 	}
 
-    DeleteOldTokens(db, u.ID, device_id)
+    DeleteOldTokens(db, udb.ID, device_id)
 
-	access_token, expires, err := token.GenerateAccessToken(u.ID)
+	access_token, expires, err := token.GenerateAccessToken(udb.ID)
 
 	if err != nil {
 		return TokensData{}, err
 	}
 
-    refresh_token, err := token.GenerateRefresh(u.ID, device_id)
+    refresh_token, err := token.GenerateRefresh(udb.ID, device_id)
 
     if err != nil {
 		return TokensData{}, err
@@ -120,7 +120,7 @@ func Login(db *gorm.DB, u User, device_id uint) (TokensData, error) {
 
     refresh_model := RefreshToken{}
     refresh_model.Token = refresh_token
-    refresh_model.UserID = u.ID
+    refresh_model.UserID = udb.ID
     refresh_model.DeviceID = device_id
 
     if _, err := refresh_model.SaveToken(db); err != nil {
