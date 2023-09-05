@@ -1,5 +1,5 @@
 # delta_art
-Complete rewrite of my course work all by myself using Go for backend (gorm, gin, jwt) and Typescript(sweltejs)
+Complete rewrite of my course work all by myself using Go for backend (gorm, gin, jwt) and Typescript(next.js)
 
 ## Main objectives:
  - JWT with refresh and access tokens for safety
