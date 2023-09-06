@@ -10,11 +10,11 @@ import { IconButton } from "@mui/material";
 import { Close } from "@mui/icons-material";
 
 
-type SignInProps = {
+type SignUpProps = {
   onClose: React.MouseEventHandler<HTMLButtonElement>
 }
 
-export default function SignIn({onClose}: SignInProps) {
+export default function SignUp({onClose}: SignUpProps) {
     const handleSubmit = (event: { preventDefault: () => void; currentTarget: HTMLFormElement | undefined; }) => {
       event.preventDefault();
       const data = new FormData(event.currentTarget);
@@ -65,16 +65,16 @@ export default function SignIn({onClose}: SignInProps) {
           <Close fontSize="inherit" />
         </IconButton>
         <Typography component="h1" variant="h5">
-          Sign in
+          Sign up
         </Typography>
         <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
           <TextField
             margin="normal"
             required
             fullWidth
-            id="email_or_login"
-            label="Email Address or Login"
-            name="email_or_login"
+            id="email"
+            label="Email"
+            name="email"
             autoComplete="email"
             autoFocus
           />
@@ -98,7 +98,7 @@ export default function SignIn({onClose}: SignInProps) {
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
           >
-            Sign In
+            Sign Up
           </Button>
           <Grid container>
             <Grid item xs>
@@ -108,7 +108,7 @@ export default function SignIn({onClose}: SignInProps) {
             </Grid>
             <Grid item>
               <Link href="#" variant="body2">
-                {"Don't have an account? Sign Up"}
+                {"Already have an account? Sign in"}
               </Link>
             </Grid>
           </Grid>
@@ -117,3 +117,4 @@ export default function SignIn({onClose}: SignInProps) {
     </Box>
   );
 }
+

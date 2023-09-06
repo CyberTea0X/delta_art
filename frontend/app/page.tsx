@@ -35,7 +35,6 @@ export default function Home() {
               alt={item.title}
               loading="lazy"
               width={300}
-              objectFit="crop"
             />
           </ImageListItem>
         ))}

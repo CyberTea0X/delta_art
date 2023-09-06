@@ -1,8 +1,9 @@
 'use client';
 import LoginForm from '@/lib/components/LoginForm';
+import SignUpForm from '@/lib/components/SignUpForm';
 import TopAppBar from '@/lib/components/TopBar';
 import { Box } from '@mui/material';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 
 export default function ClientLayout() {
@@ -19,12 +20,39 @@ export default function ClientLayout() {
         setCurrentForm(CurrentForm.SignupForm);
     }
 
+    function handleCloseForm(): void {
+        setCurrentForm(null);
+    }
+
+    function handleProfileClick(): void {
+        throw new Error('Function not implemented.');
+    }
+
+    useEffect(() => {
+    const handleEsc = (event: KeyboardEvent) => {
+       if (event.key === 'Escape') {
+           setCurrentForm(null);
+      }
+    };
+
+    window.addEventListener('keydown', handleEsc);
+
+    return () => {
+      window.removeEventListener('keydown', handleEsc);
+    };
+  }, []);
+
+
+
     return (
         <Box>
             <TopAppBar
                 onLoginClicked={handleLoginClick}
-                onSignupClicked={handleSignupClick} />
-            {(currentForm === CurrentForm.LoginForm) && <LoginForm />}
+                onSignupClicked={handleSignupClick} 
+                onProfileClicked={handleProfileClick}
+                />
+            {(currentForm === CurrentForm.LoginForm) && <LoginForm onClose={handleCloseForm}/>}
+            {(currentForm === CurrentForm.SignupForm) && <SignUpForm onClose={handleCloseForm}/>}
         </Box>
     );
 }

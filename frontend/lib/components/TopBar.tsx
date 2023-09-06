@@ -9,9 +9,10 @@ import Button from '@mui/material/Button';
 type TopAppBarProps = {
   onLoginClicked: React.MouseEventHandler<HTMLButtonElement>
   onSignupClicked: React.MouseEventHandler<HTMLButtonElement>
+  onProfileClicked: React.MouseEventHandler<HTMLButtonElement>
 }
 
-export default function TopAppBar({onLoginClicked, onSignupClicked}: TopAppBarProps) {
+export default function TopAppBar({onLoginClicked, onSignupClicked, onProfileClicked}: TopAppBarProps) {
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
@@ -21,6 +22,7 @@ export default function TopAppBar({onLoginClicked, onSignupClicked}: TopAppBarPr
           </Typography>
           <Button color="inherit" onClick={onLoginClicked}>Login</Button>
           <Button color="inherit" onClick={onSignupClicked}>Sign Up</Button>
+          <Button color="inherit" onClick={onProfileClicked}>Profile</Button>
         </Toolbar>
       </AppBar>
     </Box>
