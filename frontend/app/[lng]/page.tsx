@@ -4,27 +4,35 @@ import Box from '@mui/material/Box';
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
 import Image from 'next/image';
-import catBlack from '../public/homepage/cat-black.png';
-import catBlue from '../public/homepage/cat-blue.png';
-import catPixel from '../public/homepage/cat-pixel.png';
-import catSpace from '../public/homepage/cat-space.png';
-import catWhite from '../public/homepage/cat-white.png';
-import dragonCat from '../public/homepage/dragon-cat.png';
-import girl from '../public/homepage/girl.png';
-import lizardPurple from '../public/homepage/lizard-purple.png';
+import catBlack from '../../public/homepage/cat-black.png';
+import catBlue from '../../public/homepage/cat-blue.png';
+import catPixel from '../../public/homepage/cat-pixel.png';
+import catSpace from '../../public/homepage/cat-space.png';
+import catWhite from '../../public/homepage/cat-white.png';
+import dragonCat from '../../public/homepage/dragon-cat.png';
+import girl from '../../public/homepage/girl.png';
+import lizardPurple from '../../public/homepage/lizard-purple.png';
+import { useTranslation } from '../i18n';
 
-export default function Home() {
+type HomeProps = {
+  params: {
+    lng: string
+    } 
+}
+
+export default async function Home({ params: { lng } }: HomeProps) {
+  const { t } = await useTranslation(lng, "homepage");
   return (
     <main className={styles.main}>
     <center>
     <h1> 
-      Добро пожаловать на сайт, где вы можете делиться своим искусством.
+      {t("greeting")}
     </h1>
     <p>
-      Ведь это сайт для художников и дизайнеров и создан для вас. 
+      {t("slogan")}
     </p>
     <h2>
-      Общайтесь, рисуйте, публикуйте
+      {t("slogan2")}
     </h2>
     <Box sx={{ width: 1200, height: 600, overflowy: 'scroll'}}>
       <ImageList variant="masonry" cols={4} gap={8}>

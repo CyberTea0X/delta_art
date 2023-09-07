@@ -75,7 +75,9 @@ export default function SignUp({onClose}: SignUpProps) {
             id="email"
             label="Email"
             name="email"
-            autoComplete="email"
+            type="email"
+            autoComplete="off"
+            spellCheck="false"
             autoFocus
           />
           <TextField
@@ -86,7 +88,7 @@ export default function SignUp({onClose}: SignUpProps) {
             label="Password"
             type="password"
             id="password"
-            autoComplete="current-password"
+            autoComplete="off"
           />
           <FormControlLabel
             control={<Checkbox value="remember" color="primary" />}

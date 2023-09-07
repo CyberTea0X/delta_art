@@ -5,9 +5,13 @@ import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
-import TopAppBar from '@/lib/components/TopBar';
-import FormManager from '@/lib/components/FormManager';
+import { dir } from 'i18next';
+import { languages } from '../i18n/settings';
 import ClientLayout from './ClientLayout';
+
+export async function generateStaticParams() {
+  return languages.map((lng) => ({ lng }))
+}
 
 const roboto = Roboto({
  subsets: ['latin'],
@@ -19,14 +23,22 @@ export const metadata: Metadata = {
   description: 'Website for artists and designers',
 }
 
+type RootLayoutProps = {
+  children: React.ReactNode,
+  params: {
+    lng: string
+  }
+}
+
 export default function RootLayout({
   children,
-}: {
-  children: React.ReactNode
-}) 
+  params: {
+    lng
+  }
+}: RootLayoutProps) 
 {
   return (
-    <html lang="en">
+    <html lang={lng} dir={dir(lng)}>
       <body className={roboto.className}>
       <ClientLayout />
       {children}

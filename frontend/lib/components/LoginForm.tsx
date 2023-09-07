@@ -72,10 +72,12 @@ export default function SignIn({onClose}: SignInProps) {
             margin="normal"
             required
             fullWidth
-            id="email_or_login"
+            id="login_field"
             label="Email Address or Login"
-            name="email_or_login"
-            autoComplete="email"
+            name="login"
+            autoCapitalize="none"
+            autoCorrect="off"
+            autoComplete="username"
             autoFocus
           />
           <TextField
