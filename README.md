@@ -7,6 +7,12 @@ Complete rewrite of my course work all by myself using Go for backend (gorm, gin
  - Cloud or some database as images storage
  - Try ORM
 
+Current features/objectives implemented:
+ - JWT with refresh and access tokens for safety
+ - ORM on backend
+ - Pages localization
+ - [MUI](https://mui.com/) for design
+
 ## Project structure
 
 There are only two directories where you can find all my code:
