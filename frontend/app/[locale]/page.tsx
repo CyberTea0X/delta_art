@@ -12,16 +12,11 @@ import catWhite from '../../public/homepage/cat-white.png';
 import dragonCat from '../../public/homepage/dragon-cat.png';
 import girl from '../../public/homepage/girl.png';
 import lizardPurple from '../../public/homepage/lizard-purple.png';
-import { useTranslation } from '../i18n';
+import {useTranslations} from 'next-intl';
 
-type HomeProps = {
-  params: {
-    lng: string
-    } 
-}
+export default function Home() {
 
-export default async function Home({ params: { lng } }: HomeProps) {
-  const { t } = await useTranslation(lng, "homepage");
+  const t  = useTranslations('home');
   return (
     <main className={styles.main}>
     <center>
