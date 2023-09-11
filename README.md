@@ -10,7 +10,7 @@ Complete rewrite of my course work all by myself using Go for backend (gorm, gin
 Current features/objectives implemented:
  - JWT with refresh and access tokens for safety
  - ORM on backend
- - Pages localization
+ - Pages [internationalization](https://next-intl-docs.vercel.app/)
  - [MUI](https://mui.com/) for design
 
 ## Project structure
