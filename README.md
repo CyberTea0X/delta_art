@@ -18,6 +18,30 @@ There are only two directories where you can find all my code:
 In order to run my project you should run backend and frontend part
 and also have a mysql server.
 
+first, clone my project:
+
+HTTPS:
+```bash
+git clone https://github.com/CyberTea0X/delta_art.git
+```
+
+SSH:
+```bash
+git clone git@github.com:CyberTea0X/delta_art.git
+```
+
+### frontend
+
+Make sure you installed node.js and have latest version of it
+Then go to the frontend directory and run
+
+```bash
+npm install
+npm run dev
+```
+
+ > Now the front and back are not connected, so for the front end to work it is not necessary to launch the back yet.
+
 ### backend
 
 Make sure you installed:
