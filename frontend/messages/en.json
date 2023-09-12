@@ -9,5 +9,21 @@
         "signIn": "Sign in",
         "signUp": "Sign up",
         "profile": "Profile"
+    },
+    "signIn": {
+        "title": "Sign in",
+        "hint": "Email adress or login",
+        "password": "Password",
+        "remember": "Remember me",
+        "forgot": "Forgot password",
+        "hint2": "Don't have an account? Sign up"
+    },
+    "signUp": {
+        "title": "Sign up",
+        "hint": "Email",
+        "password": "Password",
+        "remember": "Remember me",
+        "forgot": "Forgot password",
+        "hint2": "Already have an account? Sign in"
     }
 }

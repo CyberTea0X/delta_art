@@ -8,7 +8,7 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { IconButton } from "@mui/material";
 import { Close } from "@mui/icons-material";
-
+import {useTranslations} from 'next-intl';
 
 type SignUpProps = {
   onClose: React.MouseEventHandler<HTMLButtonElement>
@@ -23,7 +23,7 @@ export default function SignUp({onClose}: SignUpProps) {
         password: data.get("password"),
       });
   };
-
+  const t = useTranslations('signUp');
   return (
     <Box
       sx={{
@@ -65,7 +65,7 @@ export default function SignUp({onClose}: SignUpProps) {
           <Close fontSize="inherit" />
         </IconButton>
         <Typography component="h1" variant="h5">
-          Sign up
+          {t('title')}
         </Typography>
         <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
           <TextField
@@ -73,7 +73,7 @@ export default function SignUp({onClose}: SignUpProps) {
             required
             fullWidth
             id="email"
-            label="Email"
+            label={t('hint')}
             name="email"
             type="email"
             autoComplete="off"
@@ -85,14 +85,14 @@ export default function SignUp({onClose}: SignUpProps) {
             required
             fullWidth
             name="password"
-            label="Password"
+            label={t('password')}
             type="password"
             id="password"
             autoComplete="off"
           />
           <FormControlLabel
             control={<Checkbox value="remember" color="primary" />}
-            label="Remember me"
+            label={t('remember')}
           />
           <Button
             type="submit"
@@ -100,17 +100,17 @@ export default function SignUp({onClose}: SignUpProps) {
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
           >
-            Sign Up
+            {t('title')}          
           </Button>
           <Grid container>
             <Grid item xs>
               <Link href="#" variant="body2">
-                Forgot password?
+                {t('remember')}
               </Link>
             </Grid>
             <Grid item>
               <Link href="#" variant="body2">
-                {"Already have an account? Sign in"}
+                {t('hint2')}
               </Link>
             </Grid>
           </Grid>
