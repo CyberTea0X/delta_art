@@ -3,25 +3,25 @@ import TextField from "@mui/material/TextField";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 import Link from "@mui/material/Link";
-import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { IconButton } from "@mui/material";
 import { Close } from "@mui/icons-material";
-import {useTranslations} from 'next-intl';
+import { useTranslations } from 'next-intl';
 
 type SignUpProps = {
   onClose: React.MouseEventHandler<HTMLButtonElement>
+  onGotoSignIn: React.MouseEventHandler<HTMLAnchorElement>
 }
 
-export default function SignUp({onClose}: SignUpProps) {
-    const handleSubmit = (event: { preventDefault: () => void; currentTarget: HTMLFormElement | undefined; }) => {
-      event.preventDefault();
-      const data = new FormData(event.currentTarget);
-      console.log({
-        email: data.get("email"),
-        password: data.get("password"),
-      });
+export default function SignUp({ onClose, onGotoSignIn }: SignUpProps) {
+  const handleSubmit = (event: { preventDefault: () => void; currentTarget: HTMLFormElement | undefined; }) => {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    console.log({
+      email: data.get("email"),
+      password: data.get("password"),
+    });
   };
   const t = useTranslations('signUp');
   return (
@@ -39,7 +39,7 @@ export default function SignUp({onClose}: SignUpProps) {
         flexDirection: "column",
         alignItems: "center",
       }}
-      >
+    >
       <Box
         sx={{
           position: "relative",
@@ -55,12 +55,12 @@ export default function SignUp({onClose}: SignUpProps) {
         }}
       >
         <IconButton onClick={onClose} aria-label="delete" size="small"
-          sx = {{
-              position: "absolute",
-              top: '1%',
-              right: '1%',
-              zIndex: 1000,
-            }}
+          sx={{
+            position: "absolute",
+            top: '1%',
+            right: '1%',
+            zIndex: 1000,
+          }}
         >
           <Close fontSize="inherit" />
         </IconButton>
@@ -100,20 +100,11 @@ export default function SignUp({onClose}: SignUpProps) {
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
           >
-            {t('title')}          
           </Button>
-          <Grid container>
-            <Grid item xs>
-              <Link href="#" variant="body2">
-                {t('remember')}
-              </Link>
-            </Grid>
-            <Grid item>
-              <Link href="#" variant="body2">
-                {t('hint2')}
-              </Link>
-            </Grid>
-          </Grid>
+          <Link href="#" variant="body2">
+            {/* Goto SignIn */}
+            <a onClick={onGotoSignIn}> {t('hint2')} </a>
+          </Link>
         </Box>
       </Box>
     </Box>
