@@ -100,6 +100,7 @@ export default function SignUp({ onClose, onGotoSignIn }: SignUpProps) {
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
           >
+            {t('title')}
           </Button>
           <Link href="#" variant="body2">
             {/* Goto SignIn */}
