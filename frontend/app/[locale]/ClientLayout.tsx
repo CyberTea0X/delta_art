@@ -3,10 +3,12 @@ import SignInForm from '@/lib/components/LoginForm';
 import SignUpForm from '@/lib/components/SignUpForm';
 import TopAppBar from '@/lib/components/TopBar';
 import { Box } from '@mui/material';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 
 export default function ClientLayout() {
+  const router = useRouter()
   const [currentForm, setCurrentForm] = useState<CurrentForm | null>(null);
   enum CurrentForm {
     LoginForm,
@@ -25,7 +27,11 @@ export default function ClientLayout() {
   }
 
   function handleProfileClick(): void {
-    throw new Error('Profile not implemented.');
+    router.push("/profile");
+  }
+
+  function handleHomePageClick(): void {
+    router.replace("/");
   }
 
   useEffect(() => {
@@ -47,6 +53,7 @@ export default function ClientLayout() {
   return (
     <Box>
       <TopAppBar
+        onHomePageClicked={handleHomePageClick}
         onLoginClicked={handleSignInClick}
         onSignupClicked={handleSignUpClick}
         onProfileClicked={handleProfileClick}
